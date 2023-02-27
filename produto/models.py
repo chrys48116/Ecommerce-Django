@@ -36,12 +36,12 @@ class Produto(models.Model):
             return
         
         new_height = round((new_width * original_height) / original_width)
+        new_img = img_pil = img_pil.resize((new_width, new_height), Image.LANCZOS)
+        new_img.save(img_full_path, optimize=True, quality=50)
 
-        print(original_width, original_height)
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
         max_image_size = 800
 
         if self.imagem:
@@ -49,3 +49,17 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class Variacao(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=50, blank=True, null=True)
+    preco = models.FloatField()
+    promo = models.FloatField(default=0)
+    estoque = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.nome or self.produto.nome
+    
+    class Meta:
+        verbose_name = 'Variação'
+        verbose_name_plural = 'Variações'
