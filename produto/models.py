@@ -15,7 +15,7 @@ class Produto(models.Model):
                                upload_to='imagens/%Y/%m/')
     slug = models.SlugField(unique=True, blank=True, null=True)
     preco = models.FloatField(verbose_name='Preço')
-    preco_promocional = models.FloatField(default=0, verbose_name='Promo.')
+    preco_promocional = models.FloatField(default=0, verbose_name='Preço Promocional')
     tipo = models.CharField(
         default='V', 
         max_length=1, 
@@ -54,7 +54,7 @@ class Variacao(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     nome = models.CharField(max_length=50, blank=True, null=True)
     preco = models.FloatField()
-    promo = models.FloatField(default=0)
+    promo = models.FloatField(default=0, verbose_name='Preço Promocional')
     estoque = models.PositiveIntegerField(default=1)
 
     def __str__(self):
