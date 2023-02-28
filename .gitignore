@@ -279,5 +279,7 @@ pyproject.toml
 pedido/migrations
 perfil/migrations
 produto/migrations
+seed.py
+tests
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,venv

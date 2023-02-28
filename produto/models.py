@@ -25,6 +25,14 @@ class Produto(models.Model):
             )
     )
     
+    def get_format_preco(self):
+        return f'R$ {self.preco:.2f}'.replace('.',',')
+    get_format_preco.short_description = 'Preço' 
+
+    def get_format_preco_promo(self):
+        return f'R$ {self.preco_promocional:.2f}'.replace('.',',')
+    get_format_preco_promo.short_description = 'Preço Promocional' 
+
     @staticmethod
     def resize_image(img, new_width=800):
         img_full_path = os.path.join(settings.MEDIA_ROOT, img.name)
@@ -41,6 +49,11 @@ class Produto(models.Model):
 
     
     def save(self, *args, **kwargs):
+        
+        if not self.slug:
+            slug = f'{slugify(self.nome)}'
+            self.slug = slug
+
         super().save(*args, **kwargs)
         max_image_size = 800
 
