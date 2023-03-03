@@ -42,10 +42,16 @@ INSTALLED_APPS = [
     'pedido',
     'perfil',
 
+    'crispy_forms',
+    'crispy_bootstrap4',
+
 
     # TODO: Remover debug toolbar
     'debug_toolbar',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
