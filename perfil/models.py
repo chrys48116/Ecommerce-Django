@@ -53,7 +53,7 @@ class Perfil(models.Model):
     )
 
     def __str__(self):
-        return f'{self.usuario}'
+        return f'{self.user}'
     
     def clean(self):
         atual = date.today().year

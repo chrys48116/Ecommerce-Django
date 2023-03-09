@@ -2,20 +2,42 @@
 
 {% load crispy_forms_tags %}
 
-
+{% csrf_token %}
 {% block conteudo %}
 
+
 <div class="row">
+    {% if not request.user.is_authenticated %}
+        <div class="col-lg">
+            <h1>Login</h1>
+        </div>
+    {% endif %}
     <div class="col-lg">
-        <h1>Login</h1>
-    </div>
-    <div class="col-lg">
-        <h1>Cadastro</h1>
+        {% block titulo_cadastro %}
+            <h1>Cadastro</h1>
+        {% endblock titulo_cadastro %}
 
         <form method="POST" action="">
-            {{userform|crispy}}
-            div.rol
+
+            {% if request.user.is_authenticated %}
+                {% csrf_token %}
+                {{userform|crispy}}
+                {{perfilform|crispy}}
+                
+            {% else %}
+                {% csrf_token %}
+                {{userform|crispy}}
+            {% endif %}
+            
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        Cadastrar
+                    </button>
+                </div>
+            </div>
         </form>
+        
     </div>
 </div>
 
