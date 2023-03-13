@@ -7,14 +7,27 @@
 
 
 <div class="row">
+
     {% if not request.user.is_authenticated %}
-        <div class="col-lg">
-            <h1>Login</h1>
+        <div class="col-lg mt-3">
+            <h2>Login</h2>
+            <form>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Nome de Usuario</label>
+                  <input type="text" name='username' class="form-control" id="exampleInputEmail1" aria-describedby="usuarioHelp">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Senha</label>
+                  <input type="password" name='password' class="form-control" id="exampleInputPassword1">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Entrar</button>
+              </form>
         </div>
     {% endif %}
-    <div class="col-lg">
+
+    <div class="col-lg mt-3">
         {% block titulo_cadastro %}
-            <h1>Cadastro</h1>
+            <h2>Cadastro</h2>
         {% endblock titulo_cadastro %}
 
         <form method="POST" action="">
@@ -26,7 +39,7 @@
                 
             {% else %}
                 {% csrf_token %}
-                {{userform|crispy}}
+                {{userform|crispy}} 
             {% endif %}
             
             <div class="row">

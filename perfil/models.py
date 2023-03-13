@@ -9,7 +9,7 @@ from datetime import date
 # Create your models here.
 
 class Perfil(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     idade = models.PositiveIntegerField(default=0)
     data_nasc = models.DateField(verbose_name='Data de Nascimento')
     cpf = models.CharField(max_length=11)
@@ -53,11 +53,21 @@ class Perfil(models.Model):
     )
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.usuario}'
     
     def clean(self):
         atual = date.today().year
         error_messages = {}
+
+        cpf_enviado = self.cpf or None
+        cpf_salvo = None
+        perfil = Perfil.objects.filter(cpf=cpf_enviado).first()
+
+        if perfil:
+            cpf_salvo = perfil.cpf
+
+            if cpf_salvo is not None and self.pk != perfil.pk:
+                error_messages['cpf'] = 'CPF já existe.'
     
         if not valida_cpf(self.cpf):
             error_messages['cpf'] = 'Digite um CPF válido.'

@@ -7,7 +7,7 @@ class PerfilForm(forms.ModelForm):
     class Meta:
         model = models.Perfil
         fields = '__all__'
-        exclude = ('user',)
+        exclude = ('usuario',)
 
 
 class UserForm(forms.ModelForm):
@@ -17,7 +17,7 @@ class UserForm(forms.ModelForm):
         label='Senha',
     )
 
-    password_confirm = forms.CharField(
+    password2 = forms.CharField(
         required=False,
         widget=forms.PasswordInput(),
         label='Confirmação senha'
@@ -31,17 +31,19 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'password',
-                  'password_confirm', 'email')
+                  'password2', 'email')
 
     def clean(self, *args, **kwargs):
         data = self.data
         cleaned = self.cleaned_data
         validation_error_msgs = {}
 
+        #print(data)
+
         usuario_data = cleaned.get('username')
         email_data = cleaned.get('email')
         password_data = cleaned.get('password')
-        password_confirm_data = cleaned.get('password_confirm')
+        password2_data = cleaned.get('password2')
 
         usuario_db = User.objects.filter(username=usuario_data).first()
         email_db = User.objects.filter(email=email_data).first()
@@ -63,9 +65,9 @@ class UserForm(forms.ModelForm):
                     validation_error_msgs['email'] = error_msg_email_exists
 
             if password_data:
-                if password_data != password_confirm_data:
+                if password_data != password2_data:
                     validation_error_msgs['password'] = error_msg_password_match
-                    validation_error_msgs['password_confirm'] = error_msg_password_match
+                    validation_error_msgs['password2'] = error_msg_password_match
 
                 if len(password_data) < 6:
                     validation_error_msgs['password'] = error_msg_password_short
@@ -81,12 +83,12 @@ class UserForm(forms.ModelForm):
             if not password_data:
                 validation_error_msgs['password'] = error_msg_required_field
 
-            if not password_confirm_data:
-                validation_error_msgs['password_confirm'] = error_msg_required_field
+            if not password2_data:
+                validation_error_msgs['password2'] = error_msg_required_field
 
-            if password_data != password_confirm_data:
+            if password_data != password2_data:
                 validation_error_msgs['password'] = error_msg_password_match
-                validation_error_msgs['password_confirm'] = error_msg_password_match
+                validation_error_msgs['password2'] = error_msg_password_match
 
             if len(password_data) < 6:
                 validation_error_msgs['password'] = error_msg_password_short
