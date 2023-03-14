@@ -148,4 +148,10 @@ class Cart(View):
 
 class ResumoCompra(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Finalizar')
+        if not self.request.user.is_authenticated:
+            return redirect('criar')
+        contexto = {
+            'usuario': self.request.user,
+            'carrinho': self.request.session['carrinho'],
+        }
+        return render(self.request, 'produto/resumo.html', contexto)

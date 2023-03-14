@@ -11,7 +11,8 @@
     {% if not request.user.is_authenticated %}
         <div class="col-lg mt-3">
             <h2>Login</h2>
-            <form>
+            <form method='POST' action='{% url 'login' %}'>
+                {% csrf_token %}
                 <div class="form-group">
                   <label for="exampleInputEmail1">Nome de Usuario</label>
                   <input type="text" name='username' class="form-control" id="exampleInputEmail1" aria-describedby="usuarioHelp">
@@ -28,19 +29,19 @@
     <div class="col-lg mt-3">
         {% block titulo_cadastro %}
             <h2>Cadastro</h2>
-        {% endblock titulo_cadastro %}
+            {% endblock titulo_cadastro %}
 
         <form method="POST" action="">
 
-            {% if request.user.is_authenticated %}
+            {% comment %} {% if request.user.is_authenticated %} {% endcomment %}
                 {% csrf_token %}
                 {{userform|crispy}}
                 {{perfilform|crispy}}
                 
-            {% else %}
+            {% comment %} {% else %}
                 {% csrf_token %}
                 {{userform|crispy}} 
-            {% endif %}
+            {% endif %} {% endcomment %}
             
             <div class="row">
                 <div class="col">
