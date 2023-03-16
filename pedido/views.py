@@ -135,5 +135,3 @@ class Listar(DispatchLoginRequiredMixin, ListView):
     template_name = 'pedido/listar.html'
     paginate_by = 10
     ordering = ['-id']
-
-# TODO: erro em 'pedidos' que foi trocado para 'listar'
