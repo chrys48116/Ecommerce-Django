@@ -4,6 +4,7 @@ from django.views.generic.detail import DetailView
 from django.views import View
 from django.contrib import messages
 from django.http import HttpResponse
+from django.db.models import Q
 from . import models
 from perfil.models import Perfil
 from pprint import pprint
@@ -15,6 +16,22 @@ class ListaProdutos(ListView):
     template_name = 'produto/lista.html'
     context_object_name = 'produtos'
     paginate_by = 10
+    ordering = ['-id']
+
+class Busca(ListaProdutos):
+    def get_queryset(self, *args, **kwargs):
+        termo = self.request.GET.get('termo')
+        qs = super().get_queryset(*args, **kwargs)
+        
+        if not termo:
+            return qs
+
+        qs = qs.filter(
+            Q(nome__icontains=termo)|
+            Q(descricao_curta__icontains=termo)|
+            Q(descricao_longa__icontains=termo)
+        )
+        return qs
 
 class Detalhes(DetailView):
     model = models.Produto

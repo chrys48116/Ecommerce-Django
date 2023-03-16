@@ -4,6 +4,7 @@ from django.forms import ValidationError
 import re
 from utils.validacpf import valida_cpf
 from datetime import date
+from django import forms
 
 
 # Create your models here.

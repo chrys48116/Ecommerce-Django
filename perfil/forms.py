@@ -1,15 +1,23 @@
 from django import forms
 from django.contrib.auth.models import User
 from . import models
+from datetime import date
 
 
 class PerfilForm(forms.ModelForm):
+    data_ano = range(1900, 2020)
+    widgets = {'data_nasc': forms.SelectDateWidget()}
+    data_nasc = forms.DateField(label='Data de Nascimento', 
+                                widget=forms.SelectDateWidget(
+        attrs={'class': 'col-md-3 mr-4 form-check-inline'}, 
+        years=range(1900, date.today().year-10)))
+
     class Meta:
         model = models.Perfil
         fields = '__all__'
         exclude = ('usuario',)
-
-
+        
+        
 class UserForm(forms.ModelForm):
     password = forms.CharField(
         required=False,
