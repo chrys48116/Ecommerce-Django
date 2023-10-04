@@ -6,6 +6,21 @@ from django.utils.text import slugify
 from utils import utils
 # Create your models here.
 
+class Categoria(models.Model):
+    nome = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+    
+    # def get_absolute_url(self):
+    #     return f'/categoria/{self.slug}/'
+    
+    class Meta:
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorias'
+        ordering = ['nome']
+
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao_curta = models.TextField(max_length=255)
@@ -16,6 +31,7 @@ class Produto(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     preco = models.FloatField(verbose_name='Preço')
     preco_promocional = models.FloatField(default=0, verbose_name='Preço Promocional')
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=True, blank=True, related_name='produtos')
     tipo = models.CharField(
         default='V', 
         max_length=1, 
@@ -76,3 +92,5 @@ class Variacao(models.Model):
     class Meta:
         verbose_name = 'Variação'
         verbose_name_plural = 'Variações'
+
+

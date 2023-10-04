@@ -25,10 +25,17 @@
             <div class='table-responsive'>
                 <table class="table">
                     <tr>
-                        <td class="font-weight-bold">Total</td>
-                        <td>{{ carrinho|cart_total|format_preco }}</td>
+                        <td class="font-weight-bold">Total + Frete</td>
+                        <td>{{ carrinho|cart_total:frete.valorpac|format_preco }}</td>
                     </tr>
                 </table>
+                <div id="frete-info">
+                    {% if frete.error %}
+                        <p>Erro ao calcular o frete: {{ frete.error }}</p>
+                    {% else %}
+                        <p>Tempo estimado de entrega: {{ frete.prazopac }} dias</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="col-lg mt-auto">

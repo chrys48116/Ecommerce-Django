@@ -1,0 +1,5 @@
+manter categoria, OK
+calcular frete, OK
+TODO: realizar pagamento, 
+TODO: enviar email de confirmacao
+TODO: visualizar painel,

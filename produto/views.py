@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.views import View
+from django.views import View, generic
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from . import models
 from perfil.models import Perfil
 from pprint import pprint
+from . import services
+import time
+from utils import utils
 
 # Create your views here.
 
@@ -31,10 +34,21 @@ class Busca(ListaProdutos):
         qs = qs.filter(
             Q(nome__icontains=termo)|
             Q(descricao_curta__icontains=termo)|
-            Q(descricao_longa__icontains=termo)
+            Q(descricao_longa__icontains=termo) |
+            Q(categoria__nome__icontains=termo)
         )
         self.request.session.save()
         return qs
+    
+
+class ListaProdutosCategoria(ListaProdutos):
+    def get_context_data(self, **kwargs):
+        print("Busca view get_context_data foi chamada")  # Debugging
+        context = super().get_context_data(**kwargs)
+        categorias = models.Categoria.objects.all()
+        print(f'Categorias: {categorias}')  # Debugging
+        context['categorias'] = categorias
+        return context
 
 class Detalhes(DetailView):
     model = models.Produto
@@ -67,6 +81,7 @@ class AddCart(View):
         variacao_nome = variacao.nome or ''
         preco_unitario = variacao.preco
         preco_promocional = variacao.promo
+        #categoria = produto.categoria
         quantidade = 1
         slug = produto.slug
         imagem = produto.imagem
@@ -117,6 +132,7 @@ class AddCart(View):
                 'preco_promocional': preco_promocional,
                 'preco_quantitativo': preco_unitario,
                 'preco_quantitativo_promocional': preco_promocional,
+                #'categoria': categoria,
                 'quantidade': 1,
                 'slug': slug,
                 'imagem': imagem,
@@ -165,7 +181,23 @@ class Cart(View):
         contexto = {
             'carrinho': self.request.session.get('carrinho', {})
             }
+        contexto.update(utils.calcular_frete(self.request))
         return render(self.request, 'produto/carrinho.html', contexto)
+    
+    # def calcular_frete(self):
+    #     if not self.request.user.is_authenticated:
+    #         return {'frete': {'error': 'Usuário não autenticado'}}
+
+    #     cep = Perfil.objects.filter(usuario=self.request.user).values_list('cep', flat=True).first()
+    #     if not cep:
+    #         return {'frete': {'error': 'CEP não disponível'}}
+
+    #     servico_frete = services.CalculoFreteService()
+    #     try:
+    #         frete_data = servico_frete.calcular_frete(cep)
+    #         return {'frete': frete_data}
+    #     except Exception as e:
+    #         return {'frete': {'error': str(e)}}
 
 class ResumoCompra(View):
     def get(self, *args, **kwargs):
@@ -186,4 +218,19 @@ class ResumoCompra(View):
             'usuario': self.request.user,
             'carrinho': self.request.session['carrinho'],
         }
+        contexto.update(utils.calcular_frete(self.request))
         return render(self.request, 'produto/resumo.html', contexto)
+    
+# class CalculoFreteView(View):
+#     def get(self, *args, **kwargs):
+#         if not self.request.user.is_authenticated:
+#             return redirect('criar')
+        
+#         cep = Perfil.objects.filter(usuario=self.request.user).values_list('cep', flat=True).first()
+
+#         servico_frete = services.CalculoFreteService()
+#         try:
+#             frete_data = servico_frete.calcular_frete(cep)
+#             return JsonResponse(frete_data)
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=400)

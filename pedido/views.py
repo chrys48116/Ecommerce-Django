@@ -82,8 +82,14 @@ class SalvarPedido(View):
                 self.request.session.save()
                 return redirect('produto:cart')
 
+        valor_frete = utils.calcular_frete(self.request)
+        valor_frete = valor_frete['frete']
+        valor_frete = valor_frete['valorpac']
         qtd_total_carrinho = utils.cart_total_qtd(carrinho)
-        valor_total_carrinho = utils.cart_total(carrinho)
+        valor_total_carrinho = utils.cart_total(carrinho, valor_frete)
+
+        # Agora adicione o valor do frete ao total do pedido
+        #valor_total_carrinho += valor_frete
 
         pedido = Pedido(
             user=self.request.user,

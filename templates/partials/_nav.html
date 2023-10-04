@@ -14,8 +14,15 @@
             <li class="nav-item active">
                 <a class="nav-link" href="{% url 'produto:lista' %}">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" 
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categorias</a>
+
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for categoria in categorias %}
+                        <a class="dropdown-item" href="{% url 'produto:busca' %}?termo={{ categoria.nome }}">{{ categoria.nome }}</a>
+                    {% endfor %}
+                </div>
             </li>
 
             {% if request.user.is_authenticated %}

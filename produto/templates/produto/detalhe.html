@@ -20,6 +20,7 @@
             <div class="mt-4 mt-lg-0">
                 <h1 class="h2">{{ produto.nome }}</h1>
                 <p class="lead">{{ produto.descricao_curta|linebreaks }}</p>
+                <p class="lead">Categoria: {{ produto.categoria }}
                 <p class="lead">
 
                     {% if produto.preco_promocional %}
