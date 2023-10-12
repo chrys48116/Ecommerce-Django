@@ -9,6 +9,14 @@
 {% block conteudo %}
 
 {% include 'partials/_pedido.html' %}
-
+{% if pedido.status == "C" %}
+<div class="row">
+    <div class="col">
+        <a class="btn btn-block btn-primary btn-lg" href="{% url 'pagar' pk=pedido.pk %}">
+            Pagar
+        </a>
+    </div>
+</div>
+{% endif %}
 
 {% endblock conteudo %}

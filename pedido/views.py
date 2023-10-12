@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, reverse
+from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView
 from django.views import View
 from django.http import HttpResponse
@@ -6,6 +7,10 @@ from django.contrib import messages
 from .models import Pedido, ItemPedido
 from produto.models import Variacao
 from utils import utils
+import mercadopago
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
+
 
 # Create your views here.
 
@@ -26,6 +31,48 @@ class Pagar(DispatchLoginRequiredMixin,  DetailView):
     model = Pedido
     pk_url_kwargs = 'pk'
     context_object_name = 'pedido'
+
+
+class ProcessarPagamento(View):
+    def enviar_email(self, request, pedido):
+        # user = request.user
+        # email_cliente = user.email
+        # #pedido = Pedido.objects.get(pk=self.kwargs['pk'])
+        # assunto = f'Informações do Pedido #{pedido.id}'
+        # mensagem = f'Detalhes do seu pedido:\n\n{pedido}'
+        # email_de = 'chrys481@gmail.com'
+        # email_para = [email_cliente]
+
+        # send_mail(assunto, mensagem, email_de, email_para)
+
+        assunto = f'Informações do Pedido #{pedido.id}'
+        mensagem_html = render_to_string('../templates/pedido/pedido_email.html', {'pedido': pedido})
+        user = request.user
+        email_cliente = user.email
+        email = EmailMessage(
+            assunto,
+            mensagem_html,
+            'chrys481@gmail.com',
+            [email_cliente]
+        )
+        email.content_subtype = 'html'  # Defina o tipo de conteúdo como HTML
+        email.send()
+
+    def post(self, request, *args, **kwargs):
+        pedido = Pedido.objects.get(pk=self.kwargs['pk'])
+        pedido.status = 'A'
+        pedido.save()
+
+        self.enviar_email(request, pedido)
+    
+        return redirect('produto:lista')
+    
+    def get(self, request, *args, **kwargs):
+        print("estou em redirect")
+        messages.success(request, 'Pagamento efetuado. Voce recebera um email com as informacoes sobre o seu pedido\
+                 ou pode acessa-lo no botão "Meus pedidos".')
+        return redirect('produto:lista')
+
     
 class SalvarPedido(View):
     template_name = 'pedido/pagar.html'
@@ -87,9 +134,6 @@ class SalvarPedido(View):
         valor_frete = valor_frete['valorpac']
         qtd_total_carrinho = utils.cart_total_qtd(carrinho)
         valor_total_carrinho = utils.cart_total(carrinho, valor_frete)
-
-        # Agora adicione o valor do frete ao total do pedido
-        #valor_total_carrinho += valor_frete
 
         pedido = Pedido(
             user=self.request.user,

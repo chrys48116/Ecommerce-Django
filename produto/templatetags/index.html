@@ -1,40 +1,10 @@
-{% extends 'base.html' %}
-
-{% load omfilters %}
-
-{% load static %}
-{% csrf_token %}
-
-{% block titulo %}Pagamento |{% endblock %}
-
-{% block conteudo %}
-{% include 'partials/_pedido.html' %}
-
-<div class="row">
-
-    <div class="col">
-        <h3>Escolha o método de pagamento</h3>
+<html>
     <head>
       <script src="https://sdk.mercadopago.com/js/v2"></script>
     </head>
-    {% csrf_token %}
+    <body>
       <div id="cardPaymentBrick_container"></div>
       <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        const csrfToken = getCookie('csrftoken');
         const mp = new MercadoPago('TEST-2708669f-d35c-457e-a897-90bfc57ad133', {
           locale: 'pt-BR'
         });
@@ -65,25 +35,18 @@
               },
               onSubmit: (cardFormData) => {
                 console.log('Card Token:', cardFormData.token);
-                alert('Pagamento efetuado. Voce recebera um email com as informacoes sobre o seu pedido\
-                ou pode acessa-lo no botão "Meus pedidos".')
-                
+                alert(cardFormData.token)
+                //  callback chamado o usuário clicar no botão de submissão dos dados
+                //  exemplo de envio dos dados coletados pelo Brick para seu servidor
                 return new Promise((resolve, reject) => {
-                  fetch("/pedido/processarpagamento/"+{{pedido.id}}, {
+                  fetch("/process_payment", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken,
                     },
                     body: JSON.stringify(cardFormData)
                   })
                     .then((response) => {
-                        if(response.ok) {
-                          window.location.replace("/perfil/")
-                        }else {
-                          console.error('Falha na resposta do servidor:', response.statusText);
-                          reject();
-                        }
                       // receber o resultado do pagamento
                       resolve();
                     })
@@ -102,8 +65,16 @@
         };
         renderCardPaymentBrick(bricksBuilder);
       </script>
-    </div>
-</div>
+    </body>
+    </html>
+    
 
 
-{% endblock conteudo %}
+
+
+
+
+
+
+
+

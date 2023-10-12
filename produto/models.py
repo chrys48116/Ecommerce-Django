@@ -31,7 +31,7 @@ class Produto(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     preco = models.FloatField(verbose_name='Preço')
     preco_promocional = models.FloatField(default=0, verbose_name='Preço Promocional')
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=True, blank=True, related_name='produtos')
+    categoria = models.ForeignKey(Categoria, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='produtos')
     tipo = models.CharField(
         default='V', 
         max_length=1, 
