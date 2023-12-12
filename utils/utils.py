@@ -2,6 +2,7 @@ from perfil.models import Perfil
 import requests
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 api_key = os.getenv('API_KEY')
