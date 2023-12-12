@@ -284,3 +284,5 @@ tests
 templates/static/assets
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,venv
+
+.secrets
